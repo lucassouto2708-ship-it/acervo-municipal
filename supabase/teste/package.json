@@ -1,0 +1,8 @@
+{
+  "name": "acervo-teste-banco",
+  "private": true,
+  "type": "module",
+  "description": "Testa a migração e as regras de acesso num Postgres local (PGlite), sem precisar do Supabase.",
+  "scripts": { "test": "node regras.test.mjs" },
+  "devDependencies": { "@electric-sql/pglite": "0.3.16" }
+}

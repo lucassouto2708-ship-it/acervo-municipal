@@ -1,0 +1,549 @@
+<title>Arquitetura do Acervo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..500,0..100;1,9..144,300..500,0..100&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* layout: documento técnico em coluna de 1180px, seções numeradas na ordem de leitura, uma faixa ink para o desenho do sistema */
+:root{
+  --paper:#FFFFFF; --ink:#050506; --blue:#648CFF;
+  --muted:#6B6B72; --line:#E7E7EA; --subtle:#F4F5F8;
+  --card:#FFFFFF; --shadow:#050506;
+  --band-bg:#050506; --band-fg:#FFFFFF; --band-muted:#A0A0A8; --band-line:#26262B;
+  --hl:#648CFF33;
+  --ok:#2F8F5B; --warn:#B7791F;
+  --f-display:"Fraunces", Georgia, "Times New Roman", serif;
+  --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#050506; --ink:#FFFFFF; --muted:#A0A0A8; --line:#26262B; --subtle:#0E0E11;
+  --card:#0B0B0D; --shadow:#3A3A42; --band-bg:#111115; --band-fg:#FFFFFF; --band-muted:#A0A0A8; --band-line:#2C2C33;
+  --hl:#648CFF44; --ok:#5BC48A; --warn:#E0A84A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#050506; --ink:#FFFFFF; --muted:#A0A0A8; --line:#26262B; --subtle:#0E0E11;
+  --card:#0B0B0D; --shadow:#3A3A42; --band-bg:#111115; --band-fg:#FFFFFF; --band-muted:#A0A0A8; --band-line:#2C2C33;
+  --hl:#648CFF44; --ok:#5BC48A; --warn:#E0A84A; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+section{padding-block:72px;border-top:1px solid var(--line)}
+@media (max-width:700px){section{padding-block:52px}}
+.mono{font-family:var(--f-mono)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* topo */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-block:22px;font-family:var(--f-mono);font-size:13px}
+.logo b{font-weight:500}.logo span{color:var(--blue)}
+.tag{color:var(--muted)}
+.hero{padding-block:40px 64px}
+h1,h2{font-family:var(--f-display);font-weight:400;font-variation-settings:"SOFT" 50;letter-spacing:-0.025em;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(44px,8vw,96px)}
+h2{font-size:clamp(30px,4.4vw,48px)}
+h1 em,h2 em{font-style:italic;color:var(--blue)}
+h3{font-family:var(--f-mono);font-size:13px;font-weight:500;text-transform:lowercase;letter-spacing:.02em;margin:0 0 10px}
+.lede{max-width:62ch;font-size:18px;color:var(--muted);margin:24px 0 0}
+.lede strong{color:var(--ink);font-weight:500}
+.eyebrow{font-family:var(--f-mono);font-size:13px;color:var(--muted);margin-bottom:14px;display:flex;gap:10px;align-items:center}
+.eyebrow .n{color:var(--blue)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:end;margin-bottom:40px}
+.sec-head p{margin:0;color:var(--muted);max-width:56ch}
+@media (max-width:800px){.sec-head{grid-template-columns:1fr;gap:16px}}
+.sep{color:var(--blue)}
+
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;font-family:var(--f-mono);font-size:12.5px}
+.facts span{border:1.5px solid var(--ink);padding:6px 10px}
+.facts span.b{background:var(--ink);color:var(--paper)}
+
+/* cartões */
+.box{border:1.5px solid var(--ink);background:var(--card);box-shadow:8px 8px 0 var(--shadow);padding:24px;min-width:0;transition:transform .2s, box-shadow .2s}
+.box:hover{transform:translateY(-4px);box-shadow:12px 12px 0 var(--blue)}
+@media (prefers-reduced-motion:reduce){.box{transition:none}.box:hover{transform:none}}
+
+/* papéis */
+.roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+@media (max-width:900px){.roles{grid-template-columns:1fr}}
+.role .who{font-family:var(--f-display);font-size:30px;font-variation-settings:"SOFT" 50;letter-spacing:-.02em;line-height:1.1;margin:4px 0 10px}
+.role p{margin:0 0 14px;color:var(--muted);font-size:15px}
+.role ul{list-style:none;margin:0;padding:0;font-size:14.5px;display:grid;gap:6px}
+.role li::before{content:"→ ";color:var(--blue);font-family:var(--f-mono)}
+.role .code{font-family:var(--f-mono);font-size:12px;color:var(--blue)}
+
+.tbl-wrap{overflow-x:auto;margin-top:40px;border:1.5px solid var(--ink)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14.5px}
+th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font-family:var(--f-mono);font-size:12px;font-weight:500;background:var(--subtle);border-bottom:1.5px solid var(--ink)}
+td.c{text-align:center;font-family:var(--f-mono);white-space:nowrap}
+.y{color:var(--ok)}.no{color:var(--muted)}.q{color:var(--warn)}
+tbody tr:last-child td{border-bottom:0}
+
+/* hierarquia */
+.tree{font-family:var(--f-mono);font-size:14px;line-height:1.9;background:var(--subtle);border:1.5px solid var(--ink);padding:22px 24px;overflow-x:auto;white-space:pre;margin:0}
+.tree .k{color:var(--blue)}.tree .d{color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+.chip{font-family:var(--f-mono);font-size:12.5px;border:1.5px solid var(--ink);padding:4px 9px}
+.note{font-size:15px;color:var(--muted);margin:0 0 14px}
+.note strong{color:var(--ink);font-weight:500}
+
+/* faixa ink: desenho do sistema */
+.band{background:var(--band-bg);color:var(--band-fg);border-top:0}
+.band .eyebrow,.band .sec-head p{color:var(--band-muted)}
+.sys{display:grid;grid-template-columns:minmax(0,1fr) 56px minmax(0,1.3fr) 56px minmax(0,1fr);align-items:stretch;gap:0}
+.node{border:1.5px solid var(--band-fg);padding:20px;min-width:0}
+.node.core{border-color:var(--blue)}
+.node .t{font-family:var(--f-mono);font-size:12px;color:var(--blue);margin-bottom:6px}
+.node .h{font-family:var(--f-display);font-size:26px;font-variation-settings:"SOFT" 50;letter-spacing:-.02em;line-height:1.1;margin-bottom:12px}
+.node ul{list-style:none;margin:0;padding:0;font-size:14px;color:var(--band-muted);display:grid;gap:6px}
+.node ul b{color:var(--band-fg);font-weight:500}
+.inner{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.inner div{border:1px solid var(--band-line);padding:10px 12px;font-size:13.5px;color:var(--band-muted)}
+.inner div b{display:block;color:var(--band-fg);font-family:var(--f-mono);font-size:12.5px;font-weight:500;margin-bottom:2px}
+.link{display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:var(--f-mono);font-size:11px;color:var(--band-muted);gap:4px;text-align:center}
+.link .ar{font-size:20px;color:var(--blue)}
+@media (max-width:1000px){.sys{grid-template-columns:1fr}.link{padding-block:10px;flex-direction:row}.link .ar{transform:rotate(90deg)}}
+.band .legend{margin-top:28px;font-family:var(--f-mono);font-size:12.5px;color:var(--band-muted);display:flex;flex-wrap:wrap;gap:8px 24px}
+
+/* pipeline */
+.pipe{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1.5px solid var(--ink)}
+.pipe li{padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.pipe li:nth-child(4n){border-right:0}
+.pipe li:nth-last-child(-n+4){border-bottom:0}
+.pipe .n{font-family:var(--f-mono);font-size:12px;color:var(--blue)}
+.pipe .h{font-weight:600;margin:4px 0 6px}
+.pipe p{margin:0;font-size:14px;color:var(--muted)}
+.pipe code,.note code,td code,.role code{font-family:var(--f-mono);font-size:.88em;background:var(--subtle);padding:1px 5px}
+@media (max-width:900px){.pipe{grid-template-columns:1fr 1fr}.pipe li{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}.pipe li:nth-child(2n){border-right:0!important}}
+@media (max-width:520px){.pipe{grid-template-columns:1fr}.pipe li{border-right:0!important}}
+
+/* mockup da busca */
+.mock{border:1.5px solid var(--ink);box-shadow:8px 8px 0 var(--shadow);background:var(--card);overflow:hidden}
+.mock-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-bottom:1.5px solid var(--ink);font-family:var(--f-mono);font-size:12.5px}
+.mock-bar .search{flex:1 1 220px;border:1.5px solid var(--ink);padding:7px 10px;min-width:0}
+.mock-bar .search i{font-style:normal;color:var(--muted)}
+.filt{border:1.5px solid var(--ink);padding:6px 9px;white-space:nowrap}
+.filt.on{background:var(--ink);color:var(--paper)}
+.mock-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+@media (max-width:860px){.mock-body{grid-template-columns:1fr}}
+.results{padding:16px;border-right:1.5px solid var(--ink);min-width:0}
+@media (max-width:860px){.results{border-right:0;border-bottom:1.5px solid var(--ink)}}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}
+.doc{border:1px solid var(--line);padding:8px;font-size:12px;cursor:default}
+.doc.sel{border:1.5px solid var(--blue);outline:3px solid var(--hl)}
+.pg{aspect-ratio:1/1.414;max-width:100%;background:var(--subtle);border:1px solid var(--line);padding:9% 10%;display:flex;flex-direction:column;gap:5%}
+.pg i{display:block;height:3.2%;background:var(--line)}
+.pg i.t{height:5%;width:60%;background:var(--muted);opacity:.55}
+.pg i.s{width:72%}.pg i.m{width:88%}
+.doc .tt{font-weight:500;margin-top:6px;line-height:1.3}
+.doc .mt{font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.panel{padding:16px;min-width:0;display:grid;gap:12px;align-content:start}
+.panel .head{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:start}
+.panel .head .tt{font-weight:600;font-size:14.5px;line-height:1.3}
+.panel .head .mt{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-top:4px}
+.inside{border:1.5px solid var(--blue);padding:7px 10px;font-family:var(--f-mono);font-size:12.5px}
+.inside::after{content:"_";color:var(--blue);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.inside::after{animation:none}}
+.hit{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:start;border-top:1px solid var(--line);padding-top:10px}
+.hit .pg{padding:12% 12%}
+.hit .p{font-family:var(--f-mono);font-size:11px;color:var(--blue)}
+.hit .s{font-size:13px;line-height:1.45}
+mark{background:var(--hl);color:inherit;padding:0 2px}
+.btn{font-family:var(--f-mono);font-size:12.5px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);padding:7px 12px;justify-self:start}
+.ex{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);margin-top:12px}
+
+.levels{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:40px}
+@media (max-width:800px){.levels{grid-template-columns:1fr}}
+.levels p{margin:0 0 10px;font-size:15px;color:var(--muted)}
+.levels p strong{color:var(--ink);font-weight:500}
+
+pre.code{font-family:var(--f-mono);font-size:13px;line-height:1.65;background:var(--subtle);border:1.5px solid var(--ink);padding:18px 20px;overflow-x:auto;margin:0}
+pre.code .c{color:var(--muted)}pre.code .k{color:var(--blue)}
+
+/* modelo de dados */
+.ents{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:900px){.ents{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.ents{grid-template-columns:1fr}}
+.ent{border:1.5px solid var(--ink);background:var(--card);min-width:0}
+.ent .nm{font-family:var(--f-mono);font-size:13px;font-weight:500;padding:9px 12px;border-bottom:1.5px solid var(--ink);display:flex;justify-content:space-between;gap:8px}
+.ent .nm span{color:var(--muted);font-weight:400}
+.ent ul{list-style:none;margin:0;padding:10px 12px;font-family:var(--f-mono);font-size:12px;line-height:1.75;color:var(--muted)}
+.ent li b{color:var(--ink);font-weight:500}
+.ent li .fk{color:var(--blue)}
+.ent.key{box-shadow:8px 8px 0 var(--blue)}
+
+/* segurança */
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border:1.5px solid var(--ink)}
+.rules div{padding:20px;border-bottom:1px solid var(--line);min-width:0}
+.rules div:nth-child(odd){border-right:1px solid var(--line)}
+.rules div:nth-last-child(-n+2){border-bottom:0}
+.rules p{margin:0;font-size:14.5px;color:var(--muted)}
+@media (max-width:760px){.rules{grid-template-columns:1fr}.rules div{border-right:0!important;border-bottom:1px solid var(--line)!important}.rules div:last-child{border-bottom:0!important}}
+
+/* fases */
+.phases{display:grid;gap:0;border:1.5px solid var(--ink)}
+.ph{display:grid;grid-template-columns:90px minmax(0,1fr) minmax(0,1.3fr);gap:20px;padding:18px 20px;border-bottom:1px solid var(--line);align-items:start}
+.ph:last-child{border-bottom:0}
+.ph .id{font-family:var(--f-mono);font-size:13px;color:var(--blue)}
+.ph .h{font-weight:600}
+.ph p{margin:0;font-size:14.5px;color:var(--muted)}
+.ph.now{background:var(--subtle)}
+.ph .now-tag{font-family:var(--f-mono);font-size:11px;border:1.5px solid var(--blue);color:var(--blue);padding:1px 6px;margin-left:8px;white-space:nowrap}
+@media (max-width:760px){.ph{grid-template-columns:1fr;gap:6px}}
+
+/* perguntas */
+.qs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:800px){.qs{grid-template-columns:1fr}}
+.qs li{border:1.5px solid var(--ink);padding:18px 20px;background:var(--card);min-width:0}
+.qs .n{font-family:var(--f-mono);font-size:12px;color:var(--blue)}
+.qs .h{font-weight:600;margin:4px 0 6px}
+.qs p{margin:0;font-size:14.5px;color:var(--muted)}
+footer{padding-block:40px;border-top:1px solid var(--line);font-family:var(--f-mono);font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="logo">&gt; <b>acervo_municipal</b><span>.arq</span></div>
+    <div class="tag">// rascunho de arquitetura · v0 · 11.11.2026</div>
+  </header>
+
+  <div class="hero">
+    <h1>Arquitetura do <em>acervo</em></h1>
+    <p class="lede">Um cofre de PDFs digitalizados, separado por <strong>município, caixa, tipo e ano</strong>, com busca no acervo inteiro e busca <strong>dentro de cada documento sem abrir o arquivo</strong>. Três níveis de acesso: você (admin), o cliente que contrata e os leitores que o cliente cadastra.</p>
+    <div class="facts">
+      <span class="b">react + vite</span><span>supabase · postgres</span><span>busca full-text em português</span><span>worker de OCR em python</span><span>arquivos privados com link temporário</span>
+    </div>
+  </div>
+</div>
+
+<!-- 01 papéis -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[01]</span> quem faz o quê</div>
+        <h2>Três <em>papéis</em>, uma regra</h2>
+      </div>
+      <p>Cada cliente é uma <strong>organização</strong>. Você libera partes do acervo para a organização; o cliente e os leitores dele enxergam só o que foi liberado. Ninguém de fora da organização vê nada dela.</p>
+    </div>
+
+    <div class="roles">
+      <div class="box role">
+        <div class="code">papel: admin</div>
+        <div class="who">Você</div>
+        <p>Dono do acervo. Único que mexe nos arquivos.</p>
+        <ul>
+          <li>Envia, edita metadados e remove PDFs</li>
+          <li>Cria clientes (organizações)</li>
+          <li>Concede e revoga acesso por município, caixa ou documento</li>
+          <li>Vê o registro de quem abriu e baixou o quê</li>
+        </ul>
+      </div>
+      <div class="box role">
+        <div class="code">papel: cliente</div>
+        <div class="who">Cliente</div>
+        <p>Quem recebe o app. Ex.: uma prefeitura ou um escritório contábil.</p>
+        <ul>
+          <li>Busca e visualiza os documentos liberados</li>
+          <li>Cria e desativa leitores da própria organização</li>
+          <li>Não envia nem apaga arquivos</li>
+        </ul>
+      </div>
+      <div class="box role">
+        <div class="code">papel: leitor</div>
+        <div class="who">Leitor</div>
+        <p>Funcionário cadastrado pelo cliente.</p>
+        <ul>
+          <li>Busca e visualiza o mesmo acervo do cliente</li>
+          <li>Não cria usuários</li>
+          <li>Não envia nem apaga arquivos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>ação</th><th>admin</th><th>cliente</th><th>leitor</th></tr></thead>
+        <tbody>
+          <tr><td>Ver e buscar documentos</td><td class="c y">todos</td><td class="c y">liberados</td><td class="c y">liberados</td></tr>
+          <tr><td>Buscar dentro do documento e ver miniaturas</td><td class="c y">sim</td><td class="c y">sim</td><td class="c y">sim</td></tr>
+          <tr><td>Baixar / imprimir o PDF</td><td class="c y">sim</td><td class="c q">a definir</td><td class="c q">a definir</td></tr>
+          <tr><td>Enviar, editar, remover documentos</td><td class="c y">sim</td><td class="c no">não</td><td class="c no">não</td></tr>
+          <tr><td>Criar clientes e conceder acesso</td><td class="c y">sim</td><td class="c no">não</td><td class="c no">não</td></tr>
+          <tr><td>Criar leitores</td><td class="c y">sim</td><td class="c y">da própria org.</td><td class="c no">não</td></tr>
+          <tr><td>Ver registro de acessos</td><td class="c y">tudo</td><td class="c q">da própria org.?</td><td class="c no">não</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 02 organização do acervo -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[02]</span> como o acervo se organiza</div>
+        <h2>Município, caixa, <em>documento</em></h2>
+      </div>
+      <p>A caixa espelha a caixa física do arquivo. Tipo e ano são atributos do documento, então funcionam como filtro em qualquer nível: "todas as leis de 2016 de Santa Rita", "tudo da caixa 012".</p>
+    </div>
+
+    <div class="two">
+      <pre class="tree"><span class="k">Santa Rita / MG</span>                    <span class="d">← município</span>
+├── <span class="k">CX-012</span>  2015–2017              <span class="d">← caixa física</span>
+│   ├── Lei 045/2016 · 12 pág.      <span class="d">tipo: lei · ano: 2016</span>
+│   ├── Minuta contábil · 38 pág.   <span class="d">tipo: minuta · ano: 2016</span>
+│   └── Decreto 210/2017 · 4 pág.
+├── <span class="k">CX-013</span>  2016
+│   └── …
+<span class="k">Boa Esperança / MG</span>
+└── <span class="k">CX-001</span>  2000–2004
+    └── …                           <span class="d">// dados de exemplo</span></pre>
+      <div>
+        <h3>// tipos de documento (lista editável pelo admin)</h3>
+        <div class="chips">
+          <span class="chip">minuta contábil</span><span class="chip">lei</span><span class="chip">decreto</span><span class="chip">portaria</span><span class="chip">balancete</span><span class="chip">contrato</span><span class="chip">+ novo tipo</span>
+        </div>
+        <p class="note"><strong>Filtros da busca:</strong> município, caixa, tipo, ano (exato ou intervalo) e texto livre. Cada filtro mostra quantos documentos sobram, para você ver na hora onde está o volume.</p>
+        <p class="note"><strong>Metadado no upload:</strong> no envio em lote, o sistema tenta ler município, caixa, tipo e ano do caminho do arquivo, por exemplo <code>SANTA-RITA/CX-012/2016_LEI_045.pdf</code>. Você confere numa tabela e confirma antes de processar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 sistema -->
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[03]</span> visão geral do sistema</div>
+        <h2>Três peças, <em>uma</em> fonte de verdade</h2>
+      </div>
+      <p>O front só conversa com o Supabase. O trabalho pesado (OCR, extração de texto, miniaturas) fica num worker separado, que pega os PDFs na fila e devolve tudo pronto para a busca.</p>
+    </div>
+
+    <div class="sys">
+      <div class="node">
+        <div class="t">// front</div>
+        <div class="h">App web</div>
+        <ul>
+          <li><b>React + Vite + TypeScript</b></li>
+          <li>Tailwind, TanStack Query</li>
+          <li>pdf.js para o visualizador</li>
+          <li>Uma camada <b>api/</b> só: dados falsos na fase 0, Supabase depois</li>
+        </ul>
+      </div>
+      <div class="link"><span class="ar">⇄</span>https<br>+ jwt</div>
+      <div class="node core">
+        <div class="t">// back · supabase</div>
+        <div class="h">Banco, login e arquivos</div>
+        <div class="inner">
+          <div><b>auth</b>login por e-mail, convite de leitor</div>
+          <div><b>postgres</b>metadados, permissões, índice de busca</div>
+          <div><b>storage</b>bucket privado com PDFs e miniaturas</div>
+          <div><b>rls</b>cada linha só aparece para quem pode ver</div>
+          <div><b>edge function</b>criar usuário, gerar link temporário</div>
+          <div><b>auditoria</b>quem viu, baixou e buscou</div>
+        </div>
+      </div>
+      <div class="link"><span class="ar">⇄</span>fila de<br>ingestão</div>
+      <div class="node">
+        <div class="t">// worker · python</div>
+        <div class="h">Ingestão</div>
+        <ul>
+          <li><b>OCRmyPDF + Tesseract (por)</b> se o PDF não tiver texto</li>
+          <li><b>PyMuPDF</b> extrai texto e gera miniaturas por página</li>
+          <li>Roda no seu PC durante a carga inicial, depois num servidor pequeno</li>
+        </ul>
+      </div>
+    </div>
+    <div class="legend"><span>→ nenhum PDF é público</span><span>→ link de visualização expira em 5 min</span><span>→ o front nunca usa a chave de serviço</span></div>
+  </div>
+</section>
+
+<!-- 04 ingestão -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[04]</span> do upload até a busca</div>
+        <h2>O que acontece com cada <em>PDF</em></h2>
+      </div>
+      <p>Tudo que deixa a consulta rápida é calculado uma vez, no envio. Na hora da busca, o sistema não abre PDF nenhum: lê texto e imagens que já estão prontos.</p>
+    </div>
+    <ol class="pipe">
+      <li><div class="n">[1] envio</div><div class="h">Upload em lote</div><p>Admin arrasta pastas. O arquivo vai direto para o storage privado e entra na fila com status <code>na_fila</code>.</p></li>
+      <li><div class="n">[2] duplicado</div><div class="h">Confere o hash</div><p>SHA-256 do arquivo. Se o mesmo PDF já existe, avisa em vez de duplicar.</p></li>
+      <li><div class="n">[3] texto</div><div class="h">Tem camada de texto?</div><p>Se o PDF é só imagem, passa pelo OCR em português. Se já tem texto, pula essa etapa.</p></li>
+      <li><div class="n">[4] páginas</div><div class="h">Texto por página</div><p>Cada página vira uma linha no banco com seu texto. É isso que permite dizer "achei na página 7".</p></li>
+      <li><div class="n">[5] miniaturas</div><div class="h">Capa e páginas</div><p>Capa em 320 px e cada página em 160 px, em WebP. Uma página digitalizada vira uns 8 KB.</p></li>
+      <li><div class="n">[6] índice</div><div class="h">Indexação</div><p>Postgres gera o índice de busca em português, sem acento e tolerante a erro de OCR.</p></li>
+      <li><div class="n">[7] pronto</div><div class="h">Liberado na busca</div><p>Status vira <code>pronto</code>. Com erro, vira <code>erro</code> e aparece no painel do admin para reprocessar.</p></li>
+      <li><div class="n">[8] acesso</div><div class="h">Herdado</div><p>Quem tem acesso ao município ou à caixa já enxerga o documento novo, sem configurar nada.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 05 busca -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[05]</span> a busca, em dois níveis</div>
+        <h2>Pesquisar <em>sem</em> abrir o arquivo</h2>
+      </div>
+      <p>Você filtra "ano 2016", clica num documento e um painel lateral mostra a capa e um campo de busca só daquele PDF. Os resultados vêm como página + trecho destacado + miniatura da página.</p>
+    </div>
+
+    <div class="mock" role="img" aria-label="Esboço da tela de busca: filtros no topo, grade de miniaturas à esquerda e painel do documento selecionado à direita com busca interna">
+      <div class="mock-bar">
+        <div class="search"><i>&gt; buscar no acervo…</i></div>
+        <span class="filt">município ▾</span><span class="filt">caixa ▾</span><span class="filt">tipo ▾</span><span class="filt on">ano: 2016 ✕</span>
+      </div>
+      <div class="mock-body">
+        <div class="results">
+          <div class="count">// 214 documentos · ano 2016 · 3 municípios</div>
+          <div class="grid">
+            <div class="doc sel"><div class="pg"><i class="t"></i><i></i><i class="m"></i><i></i><i class="s"></i><i></i><i class="m"></i></div><div class="tt">Lei 045/2016</div><div class="mt">santa rita · cx-012</div></div>
+            <div class="doc"><div class="pg"><i class="t"></i><i class="m"></i><i></i><i class="s"></i><i></i><i class="m"></i></div><div class="tt">Minuta contábil</div><div class="mt">santa rita · cx-012</div></div>
+            <div class="doc"><div class="pg"><i class="t"></i><i></i><i></i><i class="s"></i><i class="m"></i><i></i></div><div class="tt">Decreto 118/2016</div><div class="mt">boa esperança · cx-007</div></div>
+            <div class="doc"><div class="pg"><i class="t"></i><i class="s"></i><i></i><i class="m"></i><i></i><i class="s"></i></div><div class="tt">Balancete mar/2016</div><div class="mt">santa rita · cx-013</div></div>
+            <div class="doc"><div class="pg"><i class="t"></i><i></i><i class="m"></i><i class="s"></i><i></i></div><div class="tt">Portaria 33/2016</div><div class="mt">boa esperança · cx-007</div></div>
+            <div class="doc"><div class="pg"><i class="t"></i><i class="m"></i><i></i><i></i><i class="s"></i><i></i></div><div class="tt">Lei 051/2016</div><div class="mt">santa rita · cx-012</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="head">
+            <div class="pg"><i class="t"></i><i></i><i class="m"></i><i></i><i class="s"></i><i></i><i class="m"></i></div>
+            <div><div class="tt">Lei 045/2016 · dispõe sobre o orçamento anual</div><div class="mt">santa rita · cx-012 · lei · 2016 · 12 pág.</div></div>
+          </div>
+          <div class="inside">dotação</div>
+          <div class="count" style="margin:0">// 3 ocorrências em 2 páginas</div>
+          <div class="hit"><div class="pg"><i class="t"></i><i></i><i class="m"></i><i></i></div><div><div class="p">pág. 3</div><div class="s">…fica o Executivo autorizado a abrir créditos suplementares até o limite da <mark>dotação</mark> prevista no art. 4º…</div></div></div>
+          <div class="hit"><div class="pg"><i class="t"></i><i class="s"></i><i></i><i class="m"></i></div><div><div class="p">pág. 7</div><div class="s">…anulação parcial ou total de <mark>dotações</mark> orçamentárias, na forma do anexo II…</div></div></div>
+          <span class="btn">[ abrir na pág. 3 → ]</span>
+        </div>
+      </div>
+    </div>
+    <div class="ex">// esboço com dados de exemplo, não é o layout final</div>
+
+    <div class="levels">
+      <div>
+        <h3>// nível 1 · busca no acervo</h3>
+        <p><strong>Filtros</strong> viram cláusulas SQL simples; <strong>texto livre</strong> procura no índice das páginas e agrupa por documento, ordenando por relevância.</p>
+        <p>A grade carrega só miniaturas de 8 KB, então 200 resultados aparecem quase na hora. A permissão é aplicada pelo próprio banco (RLS): mesmo que o front erre, o banco não devolve o que a pessoa não pode ver.</p>
+      </div>
+      <div>
+        <h3>// nível 2 · busca dentro do documento</h3>
+        <p>Uma consulta nas páginas daquele documento só. Devolve número da página, trecho com o termo destacado e a miniatura. Responde enquanto você digita.</p>
+        <p>Clicou no trecho, abre o visualizador direto naquela página com o termo marcado. O PDF só é baixado nesse momento, e por link temporário.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:32px">
+      <h3>// a consulta do nível 2, para referência</h3>
+<pre class="code"><span class="k">select</span> numero,
+       ts_headline(<span class="k">'pt'</span>, texto, q, <span class="k">'MaxFragments=2'</span>) <span class="k">as</span> trecho,
+       miniatura_path
+  <span class="k">from</span> paginas, websearch_to_tsquery(<span class="k">'pt'</span>, unaccent(:termo)) q
+ <span class="k">where</span> documento_id = :doc <span class="k">and</span> tsv @@ q
+ <span class="k">order by</span> ts_rank(tsv, q) <span class="k">desc</span>;   <span class="c">-- 'pt' = configuração portuguese + unaccent</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- 06 dados -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[06]</span> modelo de dados</div>
+        <h2>Nove <em>tabelas</em></h2>
+      </div>
+      <p>A tabela <strong>paginas</strong> é o coração da busca: um registro por página, com o texto e o índice. <strong>acessos</strong> define o que cada organização enxerga.</p>
+    </div>
+    <div class="ents">
+      <div class="ent"><div class="nm">organizacoes <span>clientes</span></div><ul><li><b>id</b></li><li>nome · cnpj</li><li>ativo</li></ul></div>
+      <div class="ent"><div class="nm">perfis <span>usuários</span></div><ul><li><b>id</b> = auth.users</li><li>nome · e-mail</li><li>papel: admin | cliente | leitor</li><li><span class="fk">organizacao_id</span></li><li><span class="fk">criado_por</span> · ativo</li></ul></div>
+      <div class="ent"><div class="nm">municipios</div><ul><li><b>id</b></li><li>nome · uf</li></ul></div>
+      <div class="ent"><div class="nm">caixas</div><ul><li><b>id</b></li><li><span class="fk">municipio_id</span></li><li>codigo (CX-012)</li><li>ano_inicial · ano_final</li><li>descricao</li></ul></div>
+      <div class="ent"><div class="nm">tipos_documento</div><ul><li><b>id</b></li><li>nome (lei, minuta…)</li></ul></div>
+      <div class="ent"><div class="nm">documentos</div><ul><li><b>id</b> · titulo · numero</li><li><span class="fk">municipio_id</span> · <span class="fk">caixa_id</span></li><li><span class="fk">tipo_id</span> · ano</li><li>arquivo_path · capa_path</li><li>paginas · sha256</li><li>status · enviado_por</li></ul></div>
+      <div class="ent key"><div class="nm">paginas <span>busca</span></div><ul><li><b>documento_id + numero</b></li><li>texto</li><li>tsv (gerado, índice GIN)</li><li>miniatura_path</li></ul></div>
+      <div class="ent key"><div class="nm">acessos <span>permissão</span></div><ul><li><b>id</b></li><li><span class="fk">organizacao_id</span></li><li>escopo: <span class="fk">municipio_id</span> | <span class="fk">caixa_id</span> | <span class="fk">documento_id</span></li><li><span class="fk">tipo_id</span> (opcional, restringe)</li><li>concedido_por · em</li></ul></div>
+      <div class="ent"><div class="nm">auditoria</div><ul><li><b>id</b></li><li><span class="fk">usuario_id</span> · <span class="fk">documento_id</span></li><li>acao: viu | baixou | buscou</li><li>termo · quando</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 segurança -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[07]</span> segurança</div>
+        <h2>Quem não pode ver, <em>não recebe</em></h2>
+      </div>
+      <p>São documentos públicos de prefeitura, mas o acervo é o seu produto. A regra de acesso fica no banco, não só na tela.</p>
+    </div>
+    <div class="rules">
+      <div><h3>// rls no postgres</h3><p>Uma função <code>pode_ver(documento)</code> é usada em documentos, paginas e miniaturas. Admin vê tudo; os demais só quando existe um acesso da organização que cubra o município, a caixa ou o documento.</p></div>
+      <div><h3>// arquivos privados</h3><p>Bucket sem acesso público. Miniaturas e PDF chegam por link assinado que expira em 5 minutos, gerado depois de checar a permissão.</p></div>
+      <div><h3>// criação de usuários</h3><p>Feita por uma edge function: confere se quem pede é admin, ou cliente criando leitor da própria organização. A chave de serviço nunca vai para o navegador.</p></div>
+      <div><h3>// rastro</h3><p>Toda visualização, download e busca vai para a auditoria. Desativar um usuário corta o acesso na hora, sem apagar o histórico.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 fases -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[08]</span> ordem de construção</div>
+        <h2>Front primeiro, <em>back</em> encaixa depois</h2>
+      </div>
+      <p>O front nasce com dados falsos atrás de uma camada <code>api/</code>. Quando o Supabase entrar, troca-se só essa camada; as telas ficam como estão.</p>
+    </div>
+    <div class="phases">
+      <div class="ph now"><div class="id">F0</div><div class="h">Front navegável <span class="now-tag">próximo</span></div><p>Login, busca com filtros, grade de miniaturas, painel com busca interna, visualizador, painéis de admin e de equipe. Seletor para trocar entre os três papéis e testar o que cada um vê.</p></div>
+      <div class="ph"><div class="id">F1</div><div class="h">Banco e login</div><p>Projeto Supabase, as nove tabelas, RLS, bucket privado, convite por e-mail. Front passa a usar dados reais.</p></div>
+      <div class="ph"><div class="id">F2</div><div class="h">Worker de ingestão</div><p>OCR, texto por página, miniaturas, fila com reprocessamento. Teste com uma caixa real.</p></div>
+      <div class="ph"><div class="id">F3</div><div class="h">Busca de verdade</div><p>Índice em português sem acento, contagem por filtro, busca interna com destaque, abrir PDF na página certa.</p></div>
+      <div class="ph"><div class="id">F4</div><div class="h">Gestão</div><p>Clientes, leitores, concessão de acesso em lote, auditoria com filtros.</p></div>
+      <div class="ph"><div class="id">F5</div><div class="h">Produção</div><p>Domínio próprio, backup diário, carga do acervo inteiro, ajuste de desempenho com o volume real.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 perguntas -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><span class="n">[09]</span> decisões em aberto <span class="sep">✦</span></div>
+        <h2>O que eu preciso de <em>você</em></h2>
+      </div>
+      <p>As respostas mudam o banco e a tela, por isso vêm antes do código. Onde não houver resposta, sigo a sugestão entre parênteses.</p>
+    </div>
+    <ol class="qs">
+      <li><div class="n">[a]</div><div class="h">Os PDFs já têm texto?</div><p>Se dá para selecionar o texto no PDF, pulamos o OCR. Se são só imagem, o worker faz o OCR. (sugestão: suportar os dois)</p></li>
+      <li><div class="n">[b]</div><div class="h">Caixa é a caixa física?</div><p>Uma caixa pertence a um único município? Pode misturar anos? (sugestão: sim e sim)</p></li>
+      <li><div class="n">[c]</div><div class="h">Você libera o quê para o cliente?</div><p>Município inteiro, caixas soltas ou documentos avulsos? (sugestão: os três, município como padrão)</p></li>
+      <li><div class="n">[d]</div><div class="h">Leitor vê tudo do cliente?</div><p>Ou o cliente escolhe um recorte para cada leitor? (sugestão: vê tudo, recorte depois se precisar)</p></li>
+      <li><div class="n">[e]</div><div class="h">Pode baixar e imprimir?</div><p>Cliente e leitor baixam o PDF ou só visualizam? Marca d'água com o nome de quem baixou?</p></li>
+      <li><div class="n">[f]</div><div class="h">Qual o volume?</div><p>Quantos PDFs e páginas, mais ou menos. Até ~100 GB o storage do Supabase Pro resolve; acima disso, PDFs vão para o Cloudflare R2.</p></li>
+      <li><div class="n">[g]</div><div class="h">Os arquivos seguem um padrão de nome?</div><p>Se as pastas já estão como município/caixa/arquivo, o upload em lote preenche os metadados sozinho.</p></li>
+      <li><div class="n">[h]</div><div class="h">Qual visual o app usa?</div><p>Sua identidade (editorial + terminal) ou o corporativo que usamos no controle de viagens, já que vai para cliente?</p></li>
+    </ol>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer><span>&gt; acervo_municipal<span class="sep">.arq</span> · rascunho v0</span><span>próximo passo: F0 com dados falsos_</span></footer>
+</div>
