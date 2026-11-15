@@ -36,6 +36,6 @@ export async function processarPdf(dados: Uint8Array, aoAvancar: (feitas: number
     if (!capa) throw new Error('O PDF não tem páginas.')
     return { textos, capa, miniaturas }
   } finally {
-    await pdf.destroy()
+    await pdf.loadingTask.destroy()
   }
 }

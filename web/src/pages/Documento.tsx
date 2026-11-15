@@ -57,13 +57,13 @@ export function Documento() {
       .then((p) => {
         carregado = p
         if (vivo) setPdf(p)
-        else void p.destroy()
+        else void p.loadingTask.destroy()
       })
       .catch((e: unknown) => vivo && setErroPdf(e instanceof Error ? e.message : String(e)))
     void api.registrarUso('viu', id).catch(() => undefined)
     return () => {
       vivo = false
-      void carregado?.destroy()
+      void carregado?.loadingTask.destroy()
     }
   }, [id])
 
