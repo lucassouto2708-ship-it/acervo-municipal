@@ -162,7 +162,7 @@ export function Documentos() {
 function EditarDocumento({ doc, cat, aoFechar }: { doc: DocResumo; cat: Catalogo; aoFechar: () => void }) {
   const { avisar } = useUI()
   const [f, setF] = useState({
-    titulo: doc.titulo, numero: doc.numero, municipioId: doc.municipioId, entidadeId: doc.entidadeId,
+    titulo: doc.titulo, numero: doc.numero, descricao: doc.descricao ?? '', municipioId: doc.municipioId, entidadeId: doc.entidadeId,
     caixaId: doc.caixaId, tipoId: doc.tipoId, ano: doc.ano, mes: doc.mes,
   })
   const { ocupado, erro, executar } = useAcao()
@@ -222,6 +222,11 @@ function EditarDocumento({ doc, cat, aoFechar }: { doc: DocResumo; cat: Catalogo
         </label>
         <label className="campo"><span>Ano <em>*</em></span><input id="doc-ano" className="input num" inputMode="numeric" value={f.ano || ''} onChange={(e) => setF({ ...f, ano: Number(e.target.value.replace(/\D/g, '').slice(0, 4)) || 0 })} /></label>
         <label className="campo"><span>Número do ato</span><input id="doc-numero" className="input" placeholder="Ex.: 045/2016" value={f.numero} onChange={(e) => setF({ ...f, numero: e.target.value })} /></label>
+        <label className="campo" style={{ gridColumn: '1 / -1' }}>
+          <span>Descrição / palavras-chave</span>
+          <textarea id="doc-descricao" className="input" rows={3} placeholder="Ex.: folha de pagamento, precatórios, prestação de contas TCE" value={f.descricao} onChange={(e) => setF({ ...f, descricao: e.target.value })} />
+          <span className="ajuda">Entram na busca do acervo junto com o texto do PDF.</span>
+        </label>
       </form>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
     </Modal>

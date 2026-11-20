@@ -21,6 +21,7 @@ await db.exec(`
   grant execute on function auth.uid() to anon, authenticated;
 `)
 await db.exec(readFileSync(raiz + 'migrations/20261111000000_inicial.sql', 'utf8'))
+await db.exec(readFileSync(raiz + 'migrations/20261120000000_descricao.sql', 'utf8'))
 await db.exec(readFileSync(raiz + 'seed.sql', 'utf8'))
 ok(true, 'migração e seed rodaram sem erro')
 
@@ -127,6 +128,13 @@ await db.query(`insert into acessos (organizacao_id, escopo, alvo_id, tipo_id) v
 ok(await contarDocs('outro') === 0, 'acesso restrito ao tipo Lei não libera Movimento contábil')
 await db.query(`insert into acessos (organizacao_id, escopo, alvo_id) values ($1, 'documento', $2)`, [outraOrg, docs.fev])
 ok(await contarDocs('outro') === 1, 'acesso avulso a um documento libera só ele')
+await como('admin', () => db.query(`update documentos set descricao = 'folha de pagamento e precatórios' where id = $1`, [docs.jan]))
+r = await busca('leitor', 'precatorio')
+ok(r.length === 1 && r[0].paginas_com_acerto === 0 && r[0].trecho.includes('[[['), `busca acha pela descrição (sem acento, singular): ${r[0]?.trecho}`)
+r = await busca('leitor', 'instar precatorios')
+ok(r.length === 0, 'palavras em lugares diferentes (uma no texto, outra na descrição) não se misturam')
+await como('admin', () => db.query(`update documentos set descricao = 'segredo da prefeitura' where id = $1`, [docs.pref]))
+ok((await busca('leitor', 'segredo')).length === 0, 'descrição de documento sem acesso não aparece para o leitor')
 const resumo = await como('admin', async () => (await db.query(`select * from resumo_organizacoes()`)).rows)
 ok(resumo.find((x) => x.organizacao_id === iprema)?.documentos_visiveis === 2, 'resumo de clientes conta 2 visíveis para o IPREMA')
 ok(await como('leitor', () => tenta(() => db.query(`select * from resumo_organizacoes()`))) !== null, 'leitor não vê resumo de clientes')

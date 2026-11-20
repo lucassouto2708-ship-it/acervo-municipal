@@ -6,6 +6,7 @@ import { competencia, normalizar } from './util'
 export interface Sugestao {
   titulo: string
   numero: string
+  descricao: string
   municipioId: string
   entidadeId: string | null
   caixaId: string | null
@@ -99,5 +100,5 @@ export function sugerir(caminho: string, cat: Catalogo, padrao: Partial<Sugestao
   if (tipoNome && mes) titulo = `${tipoNome} · ${competencia(mes, ano)}`
   else if (tipoNome && numero) titulo = `${tipoNome} nº ${numero}`
 
-  return { titulo, numero, municipioId, entidadeId, caixaId, tipoId, ano, mes }
+  return { titulo, numero, descricao: padrao.descricao ?? '', municipioId, entidadeId, caixaId, tipoId, ano, mes }
 }

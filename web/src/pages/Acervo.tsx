@@ -260,7 +260,10 @@ function CartaoDoc({ d, selecionado, aoClicar }: { d: DocResumo; selecionado: bo
         {!d.titulo.includes(competencia(d.mes, d.ano)) && <><br />{d.tipo} · {competencia(d.mes, d.ano)}</>}
         {d.caixa && <><br />Caixa {d.caixa}</>}
       </div>
-      {d.paginasComAcerto ? (
+      {d.descricao && <div className="meta descricao" title={d.descricao}>{d.descricao}</div>}
+      {d.paginasComAcerto === 0 && d.trecho ? (
+        <div className="hits">Encontrado na descrição</div>
+      ) : d.paginasComAcerto ? (
         <>
           <div className="hits">
             {d.ocorrencias ? `${plural(d.ocorrencias, 'ocorrência', 'ocorrências')} em ` : 'Em '}

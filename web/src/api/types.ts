@@ -64,6 +64,8 @@ export interface Documento {
   id: string
   titulo: string
   numero: string
+  /** descrição / palavras-chave digitadas no envio; entram na busca */
+  descricao: string
   municipioId: string
   entidadeId: string | null
   caixaId: string | null
@@ -201,6 +203,7 @@ export interface ItemEnvio {
   caminho: string
   titulo: string
   numero: string
+  descricao: string
   municipioId: string
   entidadeId: string | null
   /** id de caixa existente, "nova:CX-012" para criar, ou null */

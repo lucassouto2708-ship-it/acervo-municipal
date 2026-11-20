@@ -372,7 +372,7 @@ export const mockApi = {
       const casados: Documento[] = []
       for (const d of base) {
         const r = resumo(d)
-        const meta = normalizar(`${d.titulo} ${d.arquivoNome} ${d.numero} ${r.tipo} ${r.entidade ?? ''} ${r.caixa ?? ''}`)
+        const meta = normalizar(`${d.titulo} ${d.arquivoNome} ${d.numero} ${d.descricao ?? ''} ${r.tipo} ${r.entidade ?? ''} ${r.caixa ?? ''}`)
         const t = await textosDe(d.id)
         let total = 0
         let todos = true
@@ -490,7 +490,7 @@ export const mockApi = {
       const id = uid('doc')
       await idbPut('arquivos', id, it.arquivo)
       estado.documentos.push({
-        id, titulo: it.titulo.trim(), numero: it.numero.trim(), municipioId: it.municipioId, entidadeId: it.entidadeId,
+        id, titulo: it.titulo.trim(), numero: it.numero.trim(), descricao: it.descricao.trim(), municipioId: it.municipioId, entidadeId: it.entidadeId,
         caixaId, tipoId: it.tipoId, ano: it.ano, mes: it.mes, paginas: 0, status: 'na_fila', erro: null,
         arquivoNome: it.arquivo.name, caminho: it.caminho, tamanhoKb: Math.round(it.arquivo.size / 1024),
         sha256: null, enviadoPor: u.id, criadoEm: new Date().toISOString(),
@@ -506,13 +506,13 @@ export const mockApi = {
     return ids
   },
 
-  async atualizarDocumento(id: string, dados: Pick<Documento, 'titulo' | 'numero' | 'municipioId' | 'entidadeId' | 'caixaId' | 'tipoId' | 'ano' | 'mes'>): Promise<void> {
+  async atualizarDocumento(id: string, dados: Pick<Documento, 'titulo' | 'numero' | 'descricao' | 'municipioId' | 'entidadeId' | 'caixaId' | 'tipoId' | 'ano' | 'mes'>): Promise<void> {
     exigirAdmin()
     const d = doc(id)
     if (!d) throw new Error('Documento não encontrado.')
     if (!dados.titulo.trim()) throw new Error('O título é obrigatório.')
     if (!dados.ano || dados.ano < 1900 || dados.ano > 2100) throw new Error('Ano inválido.')
-    Object.assign(d, { ...dados, titulo: dados.titulo.trim(), numero: dados.numero.trim() })
+    Object.assign(d, { ...dados, titulo: dados.titulo.trim(), numero: dados.numero.trim(), descricao: (dados.descricao ?? '').trim() })
     registrar('editou', id, d.titulo)
     mudou()
   },

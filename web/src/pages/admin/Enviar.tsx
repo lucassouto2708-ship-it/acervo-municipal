@@ -142,12 +142,16 @@ export function Enviar() {
                   {cat.tipos.map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}
                 </select>
               </label>
+              <label className="campo" style={{ minWidth: 240 }}>
+                <span>Descrição para todos</span>
+                <input id="todos-descricao" className="input peq" placeholder="Digite e tecle Enter" onKeyDown={(e) => { if (e.key === 'Enter') { aplicarTodos({ descricao: e.currentTarget.value }); e.currentTarget.value = '' } }} />
+              </label>
             </div>
           </div>
           <div className="tabela-wrap">
             <table className="tabela">
               <thead>
-                <tr><th>Arquivo</th><th>Título</th><th>Município</th><th>Entidade</th><th>Tipo</th><th>Mês</th><th>Ano</th><th>Caixa</th><th /></tr>
+                <tr><th>Arquivo</th><th>Título</th><th>Descrição / palavras-chave</th><th>Município</th><th>Entidade</th><th>Tipo</th><th>Mês</th><th>Ano</th><th>Caixa</th><th /></tr>
               </thead>
               <tbody>
                 {linhas.map((l) => {
@@ -161,6 +165,7 @@ export function Enviar() {
                         {falta && <div className="small" style={{ color: 'var(--erro)' }}>Falta: {falta}</div>}
                       </td>
                       <td className="celula-titulo"><input className="input peq" aria-label="Título" value={l.titulo} aria-invalid={!l.titulo.trim()} onChange={(e) => mudar(l.chave, { titulo: e.target.value })} /></td>
+                      <td style={{ minWidth: 220 }}><input className="input peq" aria-label="Descrição / palavras-chave" placeholder="Ex.: folha, precatórios" value={l.descricao} onChange={(e) => mudar(l.chave, { descricao: e.target.value })} /></td>
                       <td>
                         <select className="input peq" aria-label="Município" value={l.municipioId} aria-invalid={!l.municipioId} onChange={(e) => mudar(l.chave, { municipioId: e.target.value, entidadeId: null, caixaId: null })}>
                           <option value="">—</option>

@@ -29,7 +29,7 @@ const paraEntidade = (r: Linha): Entidade => ({ id: r.id, municipioId: r.municip
 const paraCaixa = (r: Linha): Caixa => ({ id: r.id, municipioId: r.municipio_id, codigo: r.codigo, anoInicial: r.ano_inicial, anoFinal: r.ano_final, descricao: r.descricao })
 const paraTipo = (r: Linha): TipoDocumento => ({ id: r.id, nome: r.nome })
 const paraDoc = (r: Linha): Documento => ({
-  id: r.id, titulo: r.titulo, numero: r.numero, municipioId: r.municipio_id, entidadeId: r.entidade_id, caixaId: r.caixa_id,
+  id: r.id, titulo: r.titulo, numero: r.numero, descricao: r.descricao ?? '', municipioId: r.municipio_id, entidadeId: r.entidade_id, caixaId: r.caixa_id,
   tipoId: r.tipo_id, ano: r.ano, mes: r.mes, paginas: r.paginas, status: r.status, erro: r.erro, arquivoNome: r.arquivo_nome,
   caminho: r.caminho, tamanhoKb: r.tamanho_kb, sha256: r.sha256, enviadoPor: r.enviado_por ?? '', criadoEm: r.criado_em,
 })
@@ -394,7 +394,7 @@ export function criarApiSupabase(url: string, chave: string): Api {
         const linhas = dados(await sb.rpc('buscar_texto', { p_consulta: f.texto.trim() })) as Linha[]
         extra = new Map(linhas.map((l) => [l.documento_id as string, {
           paginasComAcerto: l.paginas_com_acerto, relevancia: l.relevancia,
-          trecho: { pagina: l.primeira_pagina, partes: partesDeTrecho(l.trecho) },
+          trecho: { pagina: l.primeira_pagina ?? 0, partes: partesDeTrecho(l.trecho) },
         }]))
         base = base.filter((d) => extra!.has(d.id))
       }
@@ -465,7 +465,7 @@ export function criarApiSupabase(url: string, chave: string): Api {
             caixaId = existente?.id ?? dados(await sb.from('caixas').insert({ municipio_id: it.municipioId, codigo }).select('id').single()).id
           }
           const novo = dados(await sb.from('documentos').insert({
-            titulo: it.titulo.trim(), numero: it.numero.trim(), municipio_id: it.municipioId, entidade_id: it.entidadeId,
+            titulo: it.titulo.trim(), numero: it.numero.trim(), descricao: it.descricao.trim(), municipio_id: it.municipioId, entidade_id: it.entidadeId,
             caixa_id: caixaId, tipo_id: it.tipoId, ano: it.ano, mes: it.mes, status: 'na_fila', arquivo_nome: it.arquivo.name,
             caminho: it.caminho, tamanho_kb: Math.round(it.arquivo.size / 1024), enviado_por: u.id,
           }).select('id').single())
@@ -485,7 +485,7 @@ export function criarApiSupabase(url: string, chave: string): Api {
       if (!d.titulo.trim()) throw new Error('O título é obrigatório.')
       if (!d.ano || d.ano < 1900 || d.ano > 2100) throw new Error('Ano inválido.')
       await atualizarDoc(id, {
-        titulo: d.titulo.trim(), numero: d.numero.trim(), municipio_id: d.municipioId, entidade_id: d.entidadeId,
+        titulo: d.titulo.trim(), numero: d.numero.trim(), descricao: d.descricao.trim(), municipio_id: d.municipioId, entidade_id: d.entidadeId,
         caixa_id: d.caixaId, tipo_id: d.tipoId, ano: d.ano, mes: d.mes,
       })
       await registrar('editou', id, d.titulo.trim())

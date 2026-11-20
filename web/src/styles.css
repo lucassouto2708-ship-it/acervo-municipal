@@ -275,6 +275,7 @@ table.tabela { width: 100%; border-collapse: collapse; font-size: 13px; }
 .cartao-doc.selecionado { border-color: var(--folha); box-shadow: 0 0 0 2px rgba(63, 90, 55, 0.25); }
 .cartao-doc .titulo { font-weight: 600; font-size: 13px; line-height: 1.3; color: var(--text); overflow-wrap: anywhere; }
 .cartao-doc .meta { font-size: 11.5px; color: var(--text-2); line-height: 1.35; }
+.cartao-doc .descricao { font-style: italic; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .cartao-doc .hits { font-size: 11.5px; color: var(--folha); font-weight: 600; }
 .cartao-doc .trecho { font-size: 11.5px; color: var(--text-2); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .lista-docs .tabela td { cursor: pointer; }

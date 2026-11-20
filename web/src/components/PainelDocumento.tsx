@@ -50,6 +50,7 @@ export function PainelDocumento({ docId, termoInicial, aoFechar }: { docId: stri
                 <dt>{doc.mes ? 'Competência' : 'Ano'}</dt><dd>{competencia(doc.mes, doc.ano)}</dd>
                 <dt>Caixa</dt><dd>{doc.caixa ?? '—'}</dd>
                 <dt>Páginas</dt><dd className="num">{doc.paginas} · {formatarTamanho(doc.tamanhoKb)}</dd>
+                {doc.descricao && <><dt>Descrição</dt><dd>{doc.descricao}</dd></>}
               </dl>
             </div>
           </div>
