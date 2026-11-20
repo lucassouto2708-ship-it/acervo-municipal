@@ -254,9 +254,9 @@ table.tabela { width: 100%; border-collapse: collapse; font-size: 13px; }
 .opcao.ativa { background: var(--primary-soft); color: var(--folha); font-weight: 600; }
 .opcao .qtd { color: var(--text-3); font-size: 12px; font-variant-numeric: tabular-nums; }
 .opcao.ativa .qtd { color: var(--folha); }
-.anos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.anos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
 .ano { border: 1px solid var(--border); background: var(--surface); border-radius: var(--r-sm); padding: 3px 0; text-align: center; cursor: pointer; font-size: 12.5px; font-variant-numeric: tabular-nums; }
-.ano small { display: block; color: var(--text-3); font-size: 10.5px; line-height: 1.1; }
+.ano small { color: var(--text-3); font-size: 11.5px; }
 .ano:hover { border-color: var(--primary-line); }
 .ano.ativo { background: var(--folha); border-color: var(--folha); color: #fff; }
 .ano.ativo small { color: #DCE5D2; }

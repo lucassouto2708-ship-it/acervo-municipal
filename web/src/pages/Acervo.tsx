@@ -148,7 +148,7 @@ export function Acervo() {
               <div className="anos">
                 {data.facetas.anos.map((a) => (
                   <button key={a.ano} className={`ano${anoUnico === a.ano ? ' ativo' : ''}`} aria-pressed={anoUnico === a.ano} onClick={() => (anoUnico === a.ano ? mudar({ de: null, ate: null }) : mudar({ de: String(a.ano), ate: String(a.ano) }))}>
-                    {a.ano}<small>{formatarNumero(a.qtd)}</small>
+                    {a.ano}<small> · {formatarNumero(a.qtd)} {a.qtd === 1 ? 'doc' : 'docs'}</small>
                   </button>
                 ))}
               </div>
