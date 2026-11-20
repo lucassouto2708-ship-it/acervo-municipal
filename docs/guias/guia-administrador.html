@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Guia do Administrador · Acervo Municipal</title>
+<link rel="stylesheet" href="guia.css">
+</head>
+<body>
+
+<section class="capa">
+  <div class="marca"><i></i>Acervo Municipal</div>
+  <div>
+    <span class="tag">GUIA DO ADMINISTRADOR</span>
+    <h1>Como gerenciar o acervo</h1>
+    <p class="sub">Primeiro acesso, envio de documentos, clientes, liberação de acesso, usuários e auditoria.</p>
+  </div>
+  <div class="rodape">
+    <span>Endereço: <span class="link">lucassouto2708-ship-it.github.io/acervo-municipal</span></span>
+    <span>Versão de novembro de 2026</span>
+  </div>
+</section>
+
+<section class="sumario">
+  <h2>Conteúdo</h2>
+  <ol>
+    <li>Primeiro acesso <span>o que você precisa para entrar</span></li>
+    <li>O menu do administrador <span>o que cada tela faz</span></li>
+    <li>Cadastros <span>municípios, entidades, caixas e tipos</span></li>
+    <li>Enviar documentos <span>envio, conferência, descrição e processamento</span></li>
+    <li>Clientes e liberação de acesso <span>quem vê o quê</span></li>
+    <li>Usuários <span>criar, senha provisória, desativar</span></li>
+    <li>Pesquisar, abrir, baixar e imprimir <span>o dia a dia</span></li>
+    <li>Gerenciar documentos <span>editar, reprocessar, remover</span></li>
+    <li>Auditoria <span>quem fez o quê</span></li>
+    <li>Boas práticas e limites <span>segurança e plano atual</span></li>
+  </ol>
+</section>
+
+<section class="secao">
+  <h2><b>01</b>Primeiro acesso</h2>
+  <p>O administrador tem acesso total: envia documentos, cria clientes, libera acesso e cadastra qualquer usuário.</p>
+  <ol class="passos">
+    <li>Abra <code>lucassouto2708-ship-it.github.io/acervo-municipal</code> no navegador (Chrome ou Edge, no computador).</li>
+    <li>Digite seu <span class="campo">E-mail</span> e <span class="campo">Senha</span> e clique em <span class="btn prim">Entrar</span>.</li>
+    <li>Se você recebeu uma <b>senha provisória</b> (conta criada por outro administrador), o sistema pede para criar a sua: pelo menos 8 caracteres, digitada duas vezes. A provisória deixa de valer.</li>
+    <li>Você cai na tela <span class="menu">Acervo</span>. Seu nome e o papel "Administrador" aparecem no canto superior direito.</li>
+  </ol>
+  <div class="nota"><b>Não existe "criar conta" na tela de entrada.</b>O cadastro público está desligado de propósito. Toda conta nasce pelas mãos de um administrador (ou de um cliente, no caso de leitores).</div>
+  <div class="dica"><b>Para sair</b>Use o botão no canto superior direito (seta para fora). Em computador compartilhado, sempre saia ao terminar.</div>
+</section>
+
+<section class="secao">
+  <h2><b>02</b>O menu do administrador</h2>
+  <div class="tela">
+    <div class="topo"><b>Acervo Municipal</b><span class="on">Acervo</span><span>Documentos</span><span>Enviar</span><span>Clientes</span><span>Cadastros</span><span>Auditoria</span><span>Administradores</span></div>
+  </div>
+  <table>
+    <tr><th style="width:24%">Tela</th><th>Para que serve</th></tr>
+    <tr><td><span class="menu">Acervo</span></td><td>Pesquisar e abrir documentos. É a mesma tela que os clientes veem, mas você enxerga tudo.</td></tr>
+    <tr><td><span class="menu">Documentos</span></td><td>Lista de todos os PDFs, inclusive os que estão processando ou com erro. Editar, reprocessar e remover.</td></tr>
+    <tr><td><span class="menu">Enviar</span></td><td>Subir PDFs (arquivos soltos ou pastas inteiras) e acompanhar o processamento.</td></tr>
+    <tr><td><span class="menu">Clientes</span></td><td>Organizações que usam o sistema, o que cada uma vê e os usuários de cada uma.</td></tr>
+    <tr><td><span class="menu">Cadastros</span></td><td>Listas usadas para organizar: municípios, entidades, caixas e tipos de documento.</td></tr>
+    <tr><td><span class="menu">Auditoria</span></td><td>Registro de entradas, pesquisas, aberturas, downloads, impressões e alterações.</td></tr>
+    <tr><td><span class="menu">Administradores</span></td><td>Criar e gerenciar outros administradores.</td></tr>
+  </table>
+</section>
+
+<section class="secao nova">
+  <h2><b>03</b>Cadastros</h2>
+  <p>Antes de enviar documentos de um município novo, cadastre o que for usado para organizá-los. Em <span class="menu">Cadastros</span>:</p>
+  <table>
+    <tr><th style="width:22%">Cadastro</th><th>O que é</th><th style="width:30%">Exemplo</th></tr>
+    <tr><td><b>Município</b></td><td>Cidade dona dos documentos.</td><td>Alpercata / MG</td></tr>
+    <tr><td><b>Entidade</b></td><td>Órgão dentro do município.</td><td>IPREMA, Prefeitura, Câmara</td></tr>
+    <tr><td><b>Caixa</b></td><td>Caixa física do arquivo, com anos que ela cobre.</td><td>CX-012 · 2015 a 2017</td></tr>
+    <tr><td><b>Tipo de documento</b></td><td>Categoria do documento.</td><td>Movimento contábil, Lei, Decreto</td></tr>
+  </table>
+  <div class="dica"><b>Caixas se criam sozinhas no envio</b>Se o caminho do arquivo tiver o código da caixa (ex.: <code>CX-012</code>), a caixa é criada automaticamente.</div>
+  <p>Um cadastro só pode ser removido se nenhum documento ou acesso estiver usando ele.</p>
+</section>
+
+<section class="secao">
+  <h2><b>04</b>Enviar documentos</h2>
+  <ol class="passos">
+    <li>Abra <span class="menu">Enviar</span>.</li>
+    <li>Arraste os PDFs ou a pasta inteira para a área tracejada, ou use <span class="btn">Escolher arquivos</span> / <span class="btn">Escolher pasta</span>.</li>
+    <li>Confira a tabela. O sistema preenche sozinho o que conseguir ler do caminho do arquivo: entidade, tipo, mês e ano. Por exemplo, <code>IPREMA/Movimento Contabil 012026.pdf</code> vira "Movimento contábil · Janeiro/2026" do IPREMA.</li>
+    <li>Complete o que faltar. Linhas incompletas aparecem com "Falta: …" em vermelho e o botão de envio fica bloqueado.</li>
+    <li>Preencha a <span class="campo">Descrição / palavras-chave</span> (opcional, veja abaixo).</li>
+    <li>Clique em <span class="btn prim">Enviar N arquivos</span>.</li>
+  </ol>
+  <h3>Descrição / palavras-chave</h3>
+  <p>Texto livre que entra na busca junto com o texto do PDF. Use para termos que não aparecem escritos no documento ou para facilitar achar: <i>"folha de pagamento, precatórios, prestação de contas TCE"</i>.</p>
+  <ul class="lista">
+    <li>Cada arquivo tem o seu campo na tabela.</li>
+    <li><span class="campo">Descrição para todos</span>, no topo: digite e tecle Enter para aplicar a todos os arquivos da lista.</li>
+    <li>Dá para incluir ou mudar depois, em <span class="menu">Documentos</span> → editar.</li>
+  </ul>
+  <h3>Processamento</h3>
+  <p>Depois do envio, cada PDF é lido página por página (texto para a busca e miniatura de cada página). O andamento aparece no quadro <b>Processamento</b>: <i>Na fila → Processando (página X de Y) → Pronto</i>.</p>
+  <div class="atencao"><b>Mantenha o sistema aberto até terminar</b>O processamento acontece no seu navegador. Pode trocar de tela dentro do sistema ou de aba, mas não feche a janela. Se fechar, ao abrir de novo no mesmo computador ele continua de onde parou.</div>
+  <div class="nota"><b>Arquivos grandes são comprimidos sozinhos</b>O limite atual é 50 MB por arquivo. Acima disso, o sistema reduz só as imagens das páginas até caber; o texto e a busca continuam iguais. O documento mostra uma observação com o tamanho antes e depois.</div>
+  <p><b>Arquivo repetido:</b> se o mesmo PDF já existir no acervo, o envio para com "Arquivo idêntico a …" e nada é duplicado.</p>
+</section>
+
+<section class="secao nova">
+  <h2><b>05</b>Clientes e liberação de acesso</h2>
+  <p>Cada <b>cliente</b> é uma organização (prefeitura, instituto, escritório). Os usuários de um cliente só enxergam o que for liberado para ele.</p>
+  <h3>Criar um cliente</h3>
+  <ol class="passos">
+    <li><span class="menu">Clientes</span> → <span class="btn prim">Novo cliente</span>.</li>
+    <li>Informe o nome (e o CNPJ, se quiser). Pode já criar o primeiro usuário dele: nome e e-mail.</li>
+    <li>Clique em <span class="btn prim">Criar cliente</span>. Se criou usuário, aparece a <b>senha provisória</b> para você repassar.</li>
+  </ol>
+  <h3>Liberar documentos</h3>
+  <p>Na página do cliente, quadro <b>O que este cliente vê</b> → <b>Liberar mais</b>:</p>
+  <table>
+    <tr><th style="width:26%">Liberar</th><th>O cliente passa a ver</th></tr>
+    <tr><td>Entidade inteira</td><td>Todos os documentos daquele órgão (ex.: tudo do IPREMA).</td></tr>
+    <tr><td>Município inteiro</td><td>Todos os documentos de todas as entidades do município.</td></tr>
+    <tr><td>Caixa</td><td>Só os documentos daquela caixa.</td></tr>
+    <tr><td>Documento avulso</td><td>Só aquele documento.</td></tr>
+  </table>
+  <p>Em <span class="campo">Tipos de documento</span> você pode restringir: por exemplo, liberar o município inteiro mas <i>só Leis</i>.</p>
+  <div class="nota"><b>Documentos novos entram sozinhos</b>Se você liberou uma entidade, todo documento novo dessa entidade aparece para o cliente assim que ficar "Pronto". Não precisa liberar de novo.</div>
+  <ul class="lista">
+    <li><span class="btn">Revogar</span> tira o acesso na hora.</li>
+    <li><span class="btn">Suspender</span> bloqueia todos os usuários daquele cliente até você reativar.</li>
+  </ul>
+</section>
+
+<section class="secao">
+  <h2><b>06</b>Usuários</h2>
+  <table>
+    <tr><th style="width:20%">Papel</th><th>Vê e baixa</th><th>Envia arquivos</th><th>Cria usuários</th></tr>
+    <tr><td><b>Administrador</b></td><td class="s">tudo</td><td class="s">sim</td><td class="s">qualquer um</td></tr>
+    <tr><td><b>Cliente</b></td><td class="s">o que foi liberado à organização</td><td class="n">não</td><td class="s">leitores da própria organização</td></tr>
+    <tr><td><b>Leitor</b></td><td class="s">o que foi liberado à organização</td><td class="n">não</td><td class="n">não</td></tr>
+  </table>
+  <h3>Cadastrar alguém que só consulta e baixa</h3>
+  <ol class="passos">
+    <li><span class="menu">Clientes</span> → abra o cliente → quadro <b>Usuários</b> → <span class="btn prim">Novo usuário</span>.</li>
+    <li>Nome, e-mail e papel <b>Leitor</b> (ou <b>Cliente</b>, se a pessoa também for cadastrar leitores).</li>
+    <li>Clique em <span class="btn prim">Criar acesso</span>. Aparece a <b>senha provisória</b> (ex.: <code>acervo-4821-kmpt</code>).</li>
+    <li>Clique em <span class="btn">Copiar acesso</span> e envie para a pessoa junto com o endereço do sistema.</li>
+  </ol>
+  <div class="atencao"><b>A senha provisória aparece uma vez só</b>Copie antes de fechar. Se perder, gere outra com <span class="btn">Senha</span> na linha do usuário.</div>
+  <h3>Outras ações</h3>
+  <ul class="lista">
+    <li><span class="btn">Senha</span> gera nova senha provisória (para quem esqueceu). A antiga para de funcionar.</li>
+    <li><span class="btn">Desativar</span> corta o acesso na hora, sem apagar o histórico. <span class="btn">Reativar</span> devolve.</li>
+    <li>Novos administradores: menu <span class="menu">Administradores</span> → <span class="btn prim">Novo administrador</span>.</li>
+  </ul>
+</section>
+
+<section class="secao nova">
+  <h2><b>07</b>Pesquisar, abrir, baixar e imprimir</h2>
+  <h3>Pesquisar</h3>
+  <ul class="lista">
+    <li>Digite palavras no campo de busca do <span class="menu">Acervo</span>. O sistema procura no texto de todas as páginas e na descrição, sem diferenciar acento ou maiúscula, e acha singular e plural ("dotação" acha "dotações").</li>
+    <li>Filtros à esquerda: município, entidade, tipo, caixa e ano. O número ao lado (ex.: <b>2026 · 7 docs</b>) mostra quantos documentos ficam se você clicar.</li>
+    <li>Com várias palavras, todas precisam estar na mesma página ou na descrição.</li>
+  </ul>
+  <h3>Abrir</h3>
+  <ul class="lista">
+    <li>Clique num documento: abre um painel com capa, dados, <span class="campo">Buscar neste documento</span> e as páginas onde o termo aparece, com o trecho destacado.</li>
+    <li>Clique numa página ou em <span class="btn prim">Abrir</span> para ver o documento com o termo marcado em cima da página. Use ← e → para trocar de página e as setas ↑↓ para pular entre páginas com o termo.</li>
+  </ul>
+  <h3>Baixar e imprimir só as páginas que precisa</h3>
+  <p><span class="btn">Baixar PDF</span> e <span class="btn">Imprimir</span> abrem uma escolha: <b>Documento inteiro</b>, <b>Página atual</b>, <b>Páginas com o termo pesquisado</b> ou <b>Escolher páginas</b> (digite <code>1-3, 7, 10-12</code> ou clique nas miniaturas). O sistema monta um PDF só com elas, com o texto pesquisável.</p>
+</section>
+
+<section class="secao">
+  <h2><b>08</b>Gerenciar documentos</h2>
+  <p>Em <span class="menu">Documentos</span>, cada linha tem:</p>
+  <ul class="lista">
+    <li><b>Abrir</b>: visualizar.</li>
+    <li><b>Editar</b> (lápis): título, município, entidade, tipo, caixa, mês, ano, número do ato e descrição.</li>
+    <li><b>Reprocessar</b> (seta circular): aparece quando houve erro; lê o PDF de novo.</li>
+    <li><b>Remover</b> (lixeira): apaga o PDF, o texto e as miniaturas. <b>Não dá para desfazer.</b></li>
+  </ul>
+  <p>Situações: <b>Pronto</b>, <b>Processando</b>, <b>Na fila</b>, <b>Erro</b> (motivo aparece embaixo do título) e <b>Sem texto</b> (PDF sem texto reconhecível: aparece no acervo, mas a busca por palavras não acha nada nele).</p>
+</section>
+
+<section class="secao">
+  <h2><b>09</b>Auditoria</h2>
+  <p>Tudo fica registrado: quem entrou, o que pesquisou, que documento abriu, baixou ou imprimiu (e quais páginas), e toda alteração em documentos, acessos e usuários. Filtre por pessoa, ação ou texto. Ninguém além dos administradores vê a auditoria, e ninguém consegue apagar registros.</p>
+</section>
+
+<section class="secao">
+  <h2><b>10</b>Boas práticas e limites</h2>
+  <ul class="lista">
+    <li>Repasse senhas provisórias por um canal direto com a pessoa (WhatsApp, ligação), nunca em grupo.</li>
+    <li>Desative quem saiu da equipe de um cliente no mesmo dia.</li>
+    <li>Libere por entidade ou município sempre que possível: é mais simples de manter que documentos avulsos.</li>
+    <li>Saia do sistema em computadores compartilhados.</li>
+  </ul>
+  <div class="atencao"><b>Plano atual (versão de demonstração)</b>Armazenamento total de 1 GB e até 50 MB por arquivo (acima disso o sistema comprime). O projeto pausa se ficar 7 dias sem uso; reative pelo painel do Supabase. A versão definitiva terá espaço para o acervo completo.</div>
+  <p class="fim">Acervo Municipal · Guia do Administrador · novembro de 2026</p>
+</section>
+
+</body>
+</html>
