@@ -166,7 +166,7 @@ export function Acervo() {
             <label className="busca-campo grande">
               <span className="sr-only">Pesquisar no acervo</span>
               <Icone nome="busca" />
-              <input id="busca-acervo" className="input" placeholder="Pesquisar palavras no texto dos documentos. Ex.: conciliação bancária" value={texto} onChange={(e) => setTexto(e.target.value)} autoFocus />
+              <input id="busca-acervo" className="input" placeholder="Pesquisar nos documentos" value={texto} onChange={(e) => setTexto(e.target.value)} autoFocus />
               {texto && <button className="btn discreto peq icone limpar" onClick={() => setTexto('')} aria-label="Limpar pesquisa"><Icone nome="x" /></button>}
             </label>
             <div className="grupo-btn" role="group" aria-label="Modo de exibição">

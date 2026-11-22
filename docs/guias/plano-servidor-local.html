@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Plano · Servidor Local · Acervo Municipal</title>
+<link rel="stylesheet" href="guia.css">
+</head>
+<body>
+
+<section class="capa">
+  <div class="marca"><i></i>Acervo Municipal</div>
+  <div>
+    <span class="tag">PLANO DE AÇÃO</span>
+    <h1>Servidor local no seu PC</h1>
+    <p class="sub">Tirar o back end do Supabase na nuvem e rodar neste computador (Windows), com acesso de qualquer lugar e backup automático.</p>
+  </div>
+  <div class="rodape">
+    <span>Front continua no GitHub Pages</span>
+    <span>Versão de novembro de 2026</span>
+  </div>
+</section>
+
+<section class="sumario">
+  <h2>Conteúdo</h2>
+  <ol>
+    <li>Como vai ficar <span>visão geral</span></li>
+    <li>O que ter em mãos <span>equipamento e contas</span></li>
+    <li>Parte 1 · você faz <span>BIOS, Windows, Docker, domínio</span></li>
+    <li>Parte 2 · eu faço <span>instalação, migração e testes</span></li>
+    <li>Parte 3 · depois <span>período de segurança e rotina</span></li>
+    <li>Se o PC desligar <span>o que volta sozinho</span></li>
+    <li>Custos <span>uma vez e por mês</span></li>
+    <li>Limites e cuidados <span>o que saber antes</span></li>
+  </ol>
+</section>
+
+<section class="secao">
+  <h2><b>01</b>Como vai ficar</h2>
+  <div class="tela">
+    <div class="topo"><b>Fluxo</b><span class="on">acesso</span></div>
+    <div class="corpo">
+      <div class="linha">Usuário abre o site → <b>GitHub Pages</b> (como hoje)</div>
+      <div class="linha">O site chama <code>https://api.seudominio</code> → <b>Cloudflare Tunnel</b> (grátis, sem abrir porta no roteador)</div>
+      <div class="linha">O Tunnel entrega para <b>este PC</b> → Supabase no Docker (login, banco, PDFs, função de usuários)</div>
+      <div class="linha">Toda madrugada → <b>backup</b> para um HD externo</div>
+    </div>
+  </div>
+  <p>O código do app não muda. Só troca o endereço do servidor no front.</p>
+</section>
+
+<section class="secao">
+  <h2><b>02</b>O que ter em mãos</h2>
+  <table>
+    <tr><th style="width:32%">Item</th><th>Observação</th></tr>
+    <tr><td>Este PC</td><td>Windows 11, mínimo 8 GB de RAM, ligado 24h.</td></tr>
+    <tr><td><b>HD do acervo</b></td><td>2 TB, <b>interno</b> (ou externo sempre conectado e com letra fixa). Guarda banco e PDFs.</td></tr>
+    <tr><td><b>HD de backup</b></td><td>Outro HD, mesmo tamanho, <b>separado</b> do acervo. Nuvem grátis (Drive, OneDrive) não comporta ~1 TB.</td></tr>
+    <tr><td>Domínio</td><td>Qualquer extensão (<code>.com</code>, <code>.com.br</code>…). R$ 40–60/ano.</td></tr>
+    <tr><td>Conta Cloudflare</td><td>Grátis.</td></tr>
+    <tr><td>Nobreak</td><td>Recomendado.</td></tr>
+  </table>
+</section>
+
+<section class="secao">
+  <h2><b>03</b>Parte 1 · você faz <span style="font-weight:400;font-size:10pt;color:var(--texto-2)">(~40 min)</span></h2>
+
+  <h3>1. BIOS</h3>
+  <ol class="passos">
+    <li>Reinicie e entre na BIOS (Del, F2 ou F10 ao ligar).</li>
+    <li><b>Restore on AC Power Loss</b> (ou "AC Back", "Power On After Power Failure") → <b>Power On</b>. O PC liga sozinho quando a luz volta.</li>
+    <li>Confirme a <b>virtualização</b> ativada: "Intel VT-x" ou "SVM Mode" (AMD). Salve e saia.</li>
+  </ol>
+
+  <h3>2. Windows: nunca dormir</h3>
+  <ol class="passos">
+    <li>Configurações → Sistema → Energia: tela e suspensão <b>Nunca</b> (na tomada).</li>
+    <li>Windows Update → Opções avançadas → <b>Horário ativo</b> 6h–23h, para reinícios caírem de madrugada.</li>
+  </ol>
+
+  <h3>3. Windows: entrar sozinho</h3>
+  <ol class="passos">
+    <li>Se você entra com PIN ou Windows Hello: Configurações → Contas → Opções de entrada → desative <b>"Exigir entrada com o Windows Hello"</b>.</li>
+    <li>Baixe o <b>Autologon</b> da Microsoft (Sysinternals): <code>learn.microsoft.com/sysinternals/downloads/autologon</code>.</li>
+    <li>Digite sua senha do Windows e clique em <b>Enable</b>.</li>
+  </ol>
+  <div class="atencao"><b>Só você mexe nisso</b>Não passe sua senha do Windows para ninguém, nem para mim. Com login automático, quem tiver acesso físico ao PC entra nele: deixe o PC em local fechado.</div>
+
+  <h3>4. WSL e Docker Desktop</h3>
+  <ol class="passos">
+    <li>PowerShell como administrador: <code>wsl --install</code>. Reinicie.</li>
+    <li>Instale o <b>Docker Desktop</b>: <code>docker.com/products/docker-desktop</code>.</li>
+    <li>Settings → General: marque <b>Start Docker Desktop when you sign in</b>.</li>
+    <li><b>Antes de qualquer outra coisa:</b> Settings → Resources → Advanced → <b>Disk image location</b> → escolha uma pasta no <b>HD do acervo</b> (ex.: <code>D:\Docker</code>). Apply.</li>
+  </ol>
+  <div class="nota"><b>Por que o passo 4 é importante</b>O Docker guarda tudo num disco virtual que, por padrão, fica no C: e cresce sem limite. Mudando o local antes, banco e PDFs ficam no HD grande e o C: não lota.</div>
+
+  <h3>5. Domínio e Cloudflare</h3>
+  <ol class="passos">
+    <li>Crie a conta em <code>dash.cloudflare.com</code>.</li>
+    <li><b>.com:</b> compre direto no Cloudflare (Domain Registration). Já fica pronto.</li>
+    <li><b>.com.br:</b> compre no registro.br, adicione o domínio no Cloudflare e troque os servidores DNS no registro.br pelos dois que o Cloudflare mostrar. Propaga em minutos a algumas horas.</li>
+  </ol>
+  <div class="dica"><b>Pronto?</b>Com o Docker abrindo sozinho e o domínio "Active" no Cloudflare, me chame para a Parte 2.</div>
+</section>
+
+<section class="secao nova">
+  <h2><b>04</b>Parte 2 · eu faço <span style="font-weight:400;font-size:10pt;color:var(--texto-2)">(2–3 h, com você por perto)</span></h2>
+  <table>
+    <tr><th style="width:5%">#</th><th style="width:30%">O que</th><th>Detalhe</th></tr>
+    <tr><td>1</td><td>Subir o Supabase</td><td>Só o necessário: banco, login, arquivos, API e funções (sem Realtime, Analytics e Studio). Endereço público configurado como <code>https://api.seudominio</code>, senão os links de download saem como "localhost". Limite de arquivo em 50 MB.</td></tr>
+    <tr><td>2</td><td>Chaves secretas novas</td><td>Geradas só para este servidor.</td></tr>
+    <tr><td>3</td><td>Fechar portas</td><td>Banco e API presos ao próprio PC. Ninguém da rede acessa direto; a única entrada é o Tunnel.</td></tr>
+    <tr><td>4</td><td>Banco e função</td><td>Aplicar as 3 migrations e publicar a função <code>usuarios</code>.</td></tr>
+    <tr><td>5</td><td>Migrar da nuvem</td><td>Banco, usuários (com as mesmas senhas) e todos os PDFs.</td></tr>
+    <tr><td>6</td><td>Cloudflare Tunnel</td><td><b>Você faz o login</b> no Cloudflare pelo navegador; eu crio <code>api.seudominio</code> e instalo como serviço do Windows.</td></tr>
+    <tr><td>7</td><td>Backup automático</td><td>Tarefa agendada às 3h: cópia do banco e espelho dos PDFs no HD de backup, guardando 14 dias de banco. Comando pronto para ver a data do último backup.</td></tr>
+    <tr><td>8</td><td>Trocar o front</td><td><code>.env</code> aponta para o novo endereço; republico no GitHub Pages.</td></tr>
+    <tr><td>9</td><td>Testar</td><td>Login, envio, busca, download, impressão, criação de usuário. Depois <b>reinicio o PC</b> e confiro se tudo volta sozinho.</td></tr>
+  </table>
+</section>
+
+<section class="secao">
+  <h2><b>05</b>Parte 3 · depois</h2>
+  <ul class="lista">
+    <li><b>1 semana de segurança:</b> o Supabase da nuvem fica <b>congelado</b> como cópia, sem receber nada novo. Se algo der errado, eu volto o site para ele; o que foi enviado nesse meio tempo precisaria ser reenviado.</li>
+    <li>Tudo certo: desligue o projeto no Supabase da nuvem.</li>
+    <li><b>Uma vez por mês:</b> confira a data do último backup e se ainda há espaço nos dois HDs.</li>
+  </ul>
+</section>
+
+<section class="secao nova">
+  <h2><b>06</b>Se o PC desligar</h2>
+  <p>Resultado: o site volta em 1 a 3 minutos, sem ninguém fazer nada.</p>
+  <table>
+    <tr><th style="width:32%">Peça</th><th>Como volta</th></tr>
+    <tr><td>PC</td><td>Liga sozinho quando a luz volta (ajuste da BIOS).</td></tr>
+    <tr><td>Windows</td><td>Entra sozinho (Autologon).</td></tr>
+    <tr><td>Docker</td><td>Abre ao entrar na conta.</td></tr>
+    <tr><td>Supabase</td><td>Containers sobem com o Docker.</td></tr>
+    <tr><td>Cloudflare Tunnel</td><td>Serviço do Windows, liga junto com o PC.</td></tr>
+  </table>
+</section>
+
+<section class="secao">
+  <h2><b>07</b>Custos</h2>
+  <table>
+    <tr><th style="width:50%">Item</th><th>Valor</th></tr>
+    <tr><td>Domínio</td><td>R$ 40–60 por ano</td></tr>
+    <tr><td>Cloudflare, Docker, Supabase, GitHub Pages</td><td>R$ 0</td></tr>
+    <tr><td>HD 2 TB para o acervo</td><td>R$ 350–450, uma vez</td></tr>
+    <tr><td>HD 2 TB para o backup</td><td>R$ 350–450, uma vez</td></tr>
+    <tr><td>Luz do PC ligado 24h</td><td>R$ 30–60 por mês</td></tr>
+  </table>
+</section>
+
+<section class="secao">
+  <h2><b>08</b>Limites e cuidados</h2>
+  <ul class="lista">
+    <li><b>Upload até 100 MB pelo Cloudflare grátis.</b> O compressor do app já reduz tudo acima de 50 MB, então não deve aparecer.</li>
+    <li><b>Velocidade de download</b> dos usuários depende do <b>upload</b> da internet deste local.</li>
+    <li><b>Sem luz ou internet</b> no local, o sistema fica fora do ar até voltar.</li>
+    <li><b>Backup só vale se ficar fora do HD do acervo.</b> Idealmente, leve uma cópia para outro lugar de vez em quando (roubo, incêndio).</li>
+    <li><b>Docker Desktop</b> é grátis para uso pessoal e empresas pequenas (menos de 250 funcionários e menos de US$ 10 milhões por ano).</li>
+  </ul>
+  <p class="fim">Acervo Municipal · Plano do servidor local · novembro de 2026</p>
+</section>
+
+</body>
+</html>
